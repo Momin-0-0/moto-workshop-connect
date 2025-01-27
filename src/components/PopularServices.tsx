@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Clock, Tool, Wrench } from "lucide-react";
+import { Clock, Settings, Wrench } from "lucide-react";
 
 const services = [
   {
@@ -8,7 +8,7 @@ const services = [
     price: "From $50",
     description: "Complete oil and filter change service",
     time: "45 mins",
-    icon: Tool,
+    icon: Settings,
   },
   {
     title: "Tire Service",
