@@ -5,7 +5,6 @@ import { Input } from "@/components/ui/input";
 export const Hero = () => {
   return (
     <div className="relative min-h-[600px] flex items-center">
-      {/* Background Image */}
       <div 
         className="absolute inset-0 z-0"
         style={{
@@ -14,12 +13,12 @@ export const Hero = () => {
           backgroundPosition: "center",
         }}
       >
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/95 via-primary/80 to-secondary/90" /> {/* Gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/95 via-primary/80 to-accent/90" />
       </div>
       
       <div className="relative z-10 container mx-auto px-4">
         <div className="text-left text-white space-y-8 max-w-2xl">
-          <h1 className="text-5xl font-bold leading-tight">
+          <h1 className="text-6xl font-bold leading-tight">
             Find the Best <span className="text-accent">Motorcycle Workshop</span> Near You
           </h1>
           <p className="text-xl text-gray-100">
@@ -40,18 +39,18 @@ export const Hero = () => {
             </Button>
           </div>
 
-          <div className="flex gap-12 pt-8">
-            <div className="text-center bg-white/5 px-6 py-4 rounded-lg backdrop-blur-sm border border-white/10">
-              <div className="text-accent text-2xl font-bold">500+</div>
-              <div className="text-gray-200 text-sm">Verified Workshops</div>
+          <div className="flex gap-6 pt-8">
+            <div className="text-center bg-white/5 px-8 py-6 rounded-xl backdrop-blur-sm border border-white/10 hover:bg-white/10 transition-colors">
+              <div className="text-accent text-3xl font-bold mb-1">500+</div>
+              <div className="text-gray-200">Verified Workshops</div>
             </div>
-            <div className="text-center bg-white/5 px-6 py-4 rounded-lg backdrop-blur-sm border border-white/10">
-              <div className="text-accent text-2xl font-bold">10k+</div>
-              <div className="text-gray-200 text-sm">Happy Customers</div>
+            <div className="text-center bg-white/5 px-8 py-6 rounded-xl backdrop-blur-sm border border-white/10 hover:bg-white/10 transition-colors">
+              <div className="text-accent text-3xl font-bold mb-1">10k+</div>
+              <div className="text-gray-200">Happy Customers</div>
             </div>
-            <div className="text-center bg-white/5 px-6 py-4 rounded-lg backdrop-blur-sm border border-white/10">
-              <div className="text-accent text-2xl font-bold">24/7</div>
-              <div className="text-gray-200 text-sm">Support Available</div>
+            <div className="text-center bg-white/5 px-8 py-6 rounded-xl backdrop-blur-sm border border-white/10 hover:bg-white/10 transition-colors">
+              <div className="text-accent text-3xl font-bold mb-1">24/7</div>
+              <div className="text-gray-200">Support Available</div>
             </div>
           </div>
         </div>
