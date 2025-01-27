@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Calendar, Clock, Tool, CreditCard } from "lucide-react";
+import { Calendar, Clock, Wrench, CreditCard } from "lucide-react";
 
 export const DashboardStats = () => {
   return (
@@ -27,7 +27,7 @@ export const DashboardStats = () => {
       <Card>
         <CardHeader className="flex flex-row items-center justify-between pb-2">
           <CardTitle className="text-sm font-medium">Services Completed</CardTitle>
-          <Tool className="h-4 w-4 text-muted-foreground" />
+          <Wrench className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">9</div>
