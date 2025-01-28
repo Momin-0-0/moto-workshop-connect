@@ -11,6 +11,18 @@ export interface Workshop {
   longitude: number;
   rating: number;
   specialties: string[];
+  price_range: {
+    min: number;
+    max: number;
+  };
+  availability: {
+    days: string[];
+    hours: {
+      open: string;
+      close: string;
+    };
+  };
+  certifications: string[];
 }
 
 export interface Booking {

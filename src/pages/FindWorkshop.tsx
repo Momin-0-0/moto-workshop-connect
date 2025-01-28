@@ -1,11 +1,23 @@
 import { Navbar } from "@/components/Navbar";
 import { WorkshopMap } from "@/components/WorkshopMap";
 import { WorkshopList } from "@/components/WorkshopList";
-import { Search, MapPin } from "lucide-react";
+import { Search, MapPin, LayoutGrid, Map } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { useState } from "react";
+
+interface Workshop {
+  id: number;
+  name: string;
+  latitude: number;
+  longitude: number;
+  rating: number;
+}
 
 const FindWorkshop = () => {
+  const [selectedWorkshop, setSelectedWorkshop] = useState<Workshop | null>(null);
+  const [showMap, setShowMap] = useState(true);
+
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
@@ -24,12 +36,41 @@ const FindWorkshop = () => {
               <MapPin className="h-4 w-4" />
               Near Me
             </Button>
+            <Button
+              variant="outline"
+              onClick={() => setShowMap(!showMap)}
+              className="flex items-center gap-2"
+            >
+              {showMap ? (
+                <>
+                  <LayoutGrid className="h-4 w-4" />
+                  List View
+                </>
+              ) : (
+                <>
+                  <Map className="h-4 w-4" />
+                  Map View
+                </>
+              )}
+            </Button>
           </div>
         </div>
         
         <div className="grid lg:grid-cols-2 gap-8">
-          <WorkshopMap />
-          <WorkshopList />
+          {showMap && (
+            <div className="lg:order-2">
+              <WorkshopMap
+                workshops={[]} // Pass your workshop data here
+                selectedWorkshop={selectedWorkshop}
+                onWorkshopSelect={setSelectedWorkshop}
+              />
+            </div>
+          )}
+          <div className={showMap ? "lg:order-1" : ""}>
+            <WorkshopList
+              onWorkshopSelect={setSelectedWorkshop}
+            />
+          </div>
         </div>
       </main>
     </div>

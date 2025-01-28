@@ -3,10 +3,30 @@ import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { MapPin } from 'lucide-react';
 
-export const WorkshopMap = () => {
+interface Workshop {
+  id: number;
+  name: string;
+  latitude: number;
+  longitude: number;
+  rating: number;
+}
+
+interface WorkshopMapProps {
+  workshops?: Workshop[];
+  selectedWorkshop?: Workshop | null;
+  onWorkshopSelect?: (workshop: Workshop) => void;
+}
+
+export const WorkshopMap = ({ 
+  workshops = [], 
+  selectedWorkshop = null,
+  onWorkshopSelect 
+}: WorkshopMapProps) => {
   const mapContainer = useRef<HTMLDivElement>(null);
-  const mapInstance = useRef<mapboxgl.Map | null>(null);
+  const map = useRef<mapboxgl.Map | null>(null);
+  const markers = useRef<mapboxgl.Marker[]>([]);
   const [token, setToken] = useState('');
   const [isMapInitialized, setIsMapInitialized] = useState(false);
 
@@ -14,7 +34,6 @@ export const WorkshopMap = () => {
     if (!mapContainer.current || !token || isMapInitialized) return;
 
     try {
-      // Initialize map
       mapboxgl.accessToken = token;
       
       const map = new mapboxgl.Map({
@@ -24,10 +43,22 @@ export const WorkshopMap = () => {
         zoom: 9
       });
 
-      mapInstance.current = map;
+      map.current = map;
 
       // Add navigation controls
       map.addControl(new mapboxgl.NavigationControl(), 'top-right');
+
+      // Add geolocate control
+      map.addControl(
+        new mapboxgl.GeolocateControl({
+          positionOptions: {
+            enableHighAccuracy: true
+          },
+          trackUserLocation: true,
+          showUserHeading: true
+        }),
+        'top-right'
+      );
 
       setIsMapInitialized(true);
     } catch (error) {
@@ -35,11 +66,50 @@ export const WorkshopMap = () => {
     }
   };
 
+  // Update markers when workshops change
+  useEffect(() => {
+    if (!map.current || !isMapInitialized) return;
+
+    // Clear existing markers
+    markers.current.forEach(marker => marker.remove());
+    markers.current = [];
+
+    // Add new markers
+    workshops.forEach(workshop => {
+      const el = document.createElement('div');
+      el.className = 'workshop-marker';
+      el.innerHTML = `<div class="w-8 h-8 bg-secondary rounded-full flex items-center justify-center cursor-pointer transform transition-transform hover:scale-110 ${
+        selectedWorkshop?.id === workshop.id ? 'ring-2 ring-primary ring-offset-2' : ''
+      }">
+        <span class="text-white"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg></span>
+      </div>`;
+
+      el.addEventListener('click', () => {
+        onWorkshopSelect?.(workshop);
+      });
+
+      const marker = new mapboxgl.Marker(el)
+        .setLngLat([workshop.longitude, workshop.latitude])
+        .addTo(map.current!);
+
+      markers.current.push(marker);
+    });
+
+    // Fit bounds to show all markers
+    if (workshops.length > 0) {
+      const bounds = new mapboxgl.LngLatBounds();
+      workshops.forEach(workshop => {
+        bounds.extend([workshop.longitude, workshop.latitude]);
+      });
+      map.current.fitBounds(bounds, { padding: 50 });
+    }
+  }, [workshops, selectedWorkshop, isMapInitialized]);
+
   useEffect(() => {
     return () => {
-      if (mapInstance.current) {
-        mapInstance.current.remove();
-        mapInstance.current = null;
+      if (map.current) {
+        map.current.remove();
+        map.current = null;
         setIsMapInitialized(false);
       }
     };
