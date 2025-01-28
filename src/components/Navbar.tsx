@@ -15,9 +15,9 @@ export const Navbar = () => {
             <Link to="/find-workshop" className="text-muted-foreground hover:text-foreground">
               Find Workshops
             </Link>
-            <a href="#" className="text-muted-foreground hover:text-foreground">
+            <Link to="/services" className="text-muted-foreground hover:text-foreground">
               Services
-            </a>
+            </Link>
             <a href="#" className="text-muted-foreground hover:text-foreground">
               Parts Shop
             </a>
