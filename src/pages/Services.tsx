@@ -2,14 +2,14 @@ import { Navbar } from "@/components/Navbar";
 import { PopularServices } from "@/components/PopularServices";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Clock, Shield, Tool, Wrench } from "lucide-react";
+import { Clock, Shield, Settings, Wrench } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const additionalServices = [
   {
     title: "Diagnostics",
     description: "Complete electronic and mechanical diagnostics",
-    icon: Tool,
+    icon: Settings,
     price: "From $60",
   },
   {
