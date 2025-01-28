@@ -3,7 +3,6 @@ import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { MapPin } from 'lucide-react';
 
 interface Workshop {
   id: number;
@@ -25,7 +24,7 @@ export const WorkshopMap = ({
   onWorkshopSelect 
 }: WorkshopMapProps) => {
   const mapContainer = useRef<HTMLDivElement>(null);
-  const map = useRef<mapboxgl.Map | null>(null);
+  const mapInstance = useRef<mapboxgl.Map | null>(null);
   const markers = useRef<mapboxgl.Marker[]>([]);
   const [token, setToken] = useState('');
   const [isMapInitialized, setIsMapInitialized] = useState(false);
@@ -36,20 +35,21 @@ export const WorkshopMap = ({
     try {
       mapboxgl.accessToken = token;
       
-      const map = new mapboxgl.Map({
+      mapInstance.current = new mapboxgl.Map({
         container: mapContainer.current,
         style: 'mapbox://styles/mapbox/light-v11',
         center: [-74.5, 40],
         zoom: 9
       });
 
-      map.current = map;
-
       // Add navigation controls
-      map.addControl(new mapboxgl.NavigationControl(), 'top-right');
+      mapInstance.current.addControl(
+        new mapboxgl.NavigationControl(),
+        'top-right'
+      );
 
       // Add geolocate control
-      map.addControl(
+      mapInstance.current.addControl(
         new mapboxgl.GeolocateControl({
           positionOptions: {
             enableHighAccuracy: true
@@ -68,7 +68,7 @@ export const WorkshopMap = ({
 
   // Update markers when workshops change
   useEffect(() => {
-    if (!map.current || !isMapInitialized) return;
+    if (!mapInstance.current || !isMapInitialized) return;
 
     // Clear existing markers
     markers.current.forEach(marker => marker.remove());
@@ -90,7 +90,7 @@ export const WorkshopMap = ({
 
       const marker = new mapboxgl.Marker(el)
         .setLngLat([workshop.longitude, workshop.latitude])
-        .addTo(map.current!);
+        .addTo(mapInstance.current!);
 
       markers.current.push(marker);
     });
@@ -101,15 +101,15 @@ export const WorkshopMap = ({
       workshops.forEach(workshop => {
         bounds.extend([workshop.longitude, workshop.latitude]);
       });
-      map.current.fitBounds(bounds, { padding: 50 });
+      mapInstance.current.fitBounds(bounds, { padding: 50 });
     }
   }, [workshops, selectedWorkshop, isMapInitialized]);
 
   useEffect(() => {
     return () => {
-      if (map.current) {
-        map.current.remove();
-        map.current = null;
+      if (mapInstance.current) {
+        mapInstance.current.remove();
+        mapInstance.current = null;
         setIsMapInitialized(false);
       }
     };
