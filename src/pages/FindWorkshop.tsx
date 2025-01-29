@@ -1,27 +1,11 @@
 import { Navbar } from "@/components/Navbar";
 import { WorkshopMap } from "@/components/WorkshopMap";
 import { WorkshopList } from "@/components/WorkshopList";
-import { Search, MapPin, LayoutGrid, Map, Filter } from "lucide-react";
+import { Search, MapPin, LayoutGrid, Map } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
-
-interface Workshop {
-  id: number;
-  name: string;
-  latitude: number;
-  longitude: number;
-  rating: number;
-}
 
 const FindWorkshop = () => {
   const [selectedWorkshop, setSelectedWorkshop] = useState<Workshop | null>(null);
@@ -74,25 +58,6 @@ const FindWorkshop = () => {
             <MapPin className="h-4 w-4" />
             Near Me
           </Button>
-          <Sheet>
-            <SheetTrigger asChild>
-              <Button variant="outline" className="flex items-center gap-2">
-                <Filter className="h-4 w-4" />
-                Filters
-              </Button>
-            </SheetTrigger>
-            <SheetContent>
-              <SheetHeader>
-                <SheetTitle>Filter Workshops</SheetTitle>
-                <SheetDescription>
-                  Refine your search with specific criteria
-                </SheetDescription>
-              </SheetHeader>
-              <div className="py-4">
-                <WorkshopList onWorkshopSelect={setSelectedWorkshop} />
-              </div>
-            </SheetContent>
-          </Sheet>
           <Button
             variant="outline"
             onClick={() => setShowMap(!showMap)}
