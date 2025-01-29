@@ -42,6 +42,21 @@ const FindWorkshop = () => {
     rating: workshop.rating
   });
 
+  // Transform Workshop type for list component
+  const transformWorkshopForList = (workshop: Workshop) => ({
+    id: parseInt(workshop.id),
+    name: workshop.name,
+    rating: workshop.rating,
+    address: workshop.address,
+    phone: workshop.phone,
+    specialties: workshop.specialties,
+    priceRange: [workshop.price_range.min, workshop.price_range.max],
+    availability: [`${workshop.availability.days.join(", ")}: ${workshop.availability.hours.open}-${workshop.availability.hours.close}`],
+    certifications: workshop.certifications,
+    latitude: workshop.latitude,
+    longitude: workshop.longitude,
+  });
+
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
@@ -94,9 +109,9 @@ const FindWorkshop = () => {
                 workshops={selectedWorkshop ? [transformWorkshopForMap(selectedWorkshop)] : []}
                 selectedWorkshop={selectedWorkshop ? transformWorkshopForMap(selectedWorkshop) : null}
                 onWorkshopSelect={(mapWorkshop) => {
-                  // Find the original workshop from your data source
-                  // For now, we'll just set it as is
-                  setSelectedWorkshop(selectedWorkshop);
+                  if (selectedWorkshop) {
+                    setSelectedWorkshop(selectedWorkshop);
+                  }
                 }}
               />
             </div>
@@ -113,7 +128,35 @@ const FindWorkshop = () => {
               </div>
             </div>
             <WorkshopList
-              onWorkshopSelect={setSelectedWorkshop}
+              onWorkshopSelect={(workshop) => {
+                const dbWorkshop: Workshop = {
+                  id: workshop.id.toString(),
+                  created_at: new Date().toISOString(),
+                  name: workshop.name,
+                  description: "",
+                  address: workshop.address,
+                  phone: workshop.phone,
+                  email: "",
+                  owner_id: "",
+                  latitude: workshop.latitude,
+                  longitude: workshop.longitude,
+                  rating: workshop.rating,
+                  specialties: workshop.specialties,
+                  price_range: {
+                    min: workshop.priceRange[0],
+                    max: workshop.priceRange[1]
+                  },
+                  availability: {
+                    days: workshop.availability[0].split(":")[0].split(", "),
+                    hours: {
+                      open: workshop.availability[0].split(": ")[1].split("-")[0],
+                      close: workshop.availability[0].split(": ")[1].split("-")[1]
+                    }
+                  },
+                  certifications: workshop.certifications
+                };
+                setSelectedWorkshop(dbWorkshop);
+              }}
             />
           </div>
         </div>
