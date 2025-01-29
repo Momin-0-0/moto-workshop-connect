@@ -12,7 +12,12 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useState } from "react";
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink } from "@/components/ui/breadcrumb";
+import { 
+  Breadcrumb, 
+  BreadcrumbItem, 
+  BreadcrumbLink,
+  BreadcrumbSeparator 
+} from "@/components/ui/breadcrumb";
 
 const Shop = () => {
   const [category, setCategory] = useState<string>("all");
@@ -28,8 +33,9 @@ const Shop = () => {
           <BreadcrumbItem>
             <BreadcrumbLink href="/">Home</BreadcrumbLink>
           </BreadcrumbItem>
-          <BreadcrumbItem isCurrentPage>
-            <BreadcrumbLink href="/shop">Shop</BreadcrumbLink>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem>
+            <BreadcrumbLink href="/shop" className="font-semibold">Shop</BreadcrumbLink>
           </BreadcrumbItem>
         </Breadcrumb>
 
