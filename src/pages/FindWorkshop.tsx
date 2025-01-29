@@ -33,6 +33,15 @@ const FindWorkshop = () => {
     }
   };
 
+  // Transform Workshop type for map component
+  const transformWorkshopForMap = (workshop: Workshop) => ({
+    id: parseInt(workshop.id),
+    name: workshop.name,
+    latitude: workshop.latitude,
+    longitude: workshop.longitude,
+    rating: workshop.rating
+  });
+
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
@@ -82,9 +91,13 @@ const FindWorkshop = () => {
           {showMap && (
             <div className="lg:order-2 rounded-lg overflow-hidden shadow-lg">
               <WorkshopMap
-                workshops={[]} // Pass your workshop data here
-                selectedWorkshop={selectedWorkshop}
-                onWorkshopSelect={setSelectedWorkshop}
+                workshops={selectedWorkshop ? [transformWorkshopForMap(selectedWorkshop)] : []}
+                selectedWorkshop={selectedWorkshop ? transformWorkshopForMap(selectedWorkshop) : null}
+                onWorkshopSelect={(mapWorkshop) => {
+                  // Find the original workshop from your data source
+                  // For now, we'll just set it as is
+                  setSelectedWorkshop(selectedWorkshop);
+                }}
               />
             </div>
           )}

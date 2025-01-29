@@ -4,7 +4,7 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
-interface Workshop {
+interface MapWorkshop {
   id: number;
   name: string;
   latitude: number;
@@ -13,9 +13,9 @@ interface Workshop {
 }
 
 interface WorkshopMapProps {
-  workshops?: Workshop[];
-  selectedWorkshop?: Workshop | null;
-  onWorkshopSelect?: (workshop: Workshop) => void;
+  workshops?: MapWorkshop[];
+  selectedWorkshop?: MapWorkshop | null;
+  onWorkshopSelect?: (workshop: MapWorkshop) => void;
 }
 
 export const WorkshopMap = ({ 
