@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
+import type { Workshop } from "@/types/database.types";
 
 const FindWorkshop = () => {
   const [selectedWorkshop, setSelectedWorkshop] = useState<Workshop | null>(null);
