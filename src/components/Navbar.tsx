@@ -18,9 +18,9 @@ export const Navbar = () => {
             <Link to="/services" className="text-muted-foreground hover:text-foreground">
               Services
             </Link>
-            <a href="#" className="text-muted-foreground hover:text-foreground">
+            <Link to="/shop" className="text-muted-foreground hover:text-foreground">
               Parts Shop
-            </a>
+            </Link>
             <Button variant="outline" className="mr-2">
               Sign In
             </Button>
