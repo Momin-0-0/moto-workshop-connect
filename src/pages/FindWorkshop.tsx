@@ -1,4 +1,3 @@
-
 import { Navbar } from "@/components/Navbar";
 import { WorkshopMap } from "@/components/WorkshopMap";
 import { WorkshopList } from "@/components/WorkshopList";
@@ -25,6 +24,11 @@ import {
 const FindWorkshop = () => {
   const [selectedWorkshop, setSelectedWorkshop] = useState<Workshop | null>(null);
   const [showMap, setShowMap] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedServiceType, setSelectedServiceType] = useState("all");
+  const [selectedPriceRange, setSelectedPriceRange] = useState("all");
+  const [selectedRating, setSelectedRating] = useState("all");
+  const [selectedDistance, setSelectedDistance] = useState("all");
   const [activeFilters, setActiveFilters] = useState<string[]>([]);
   const { toast } = useToast();
 
@@ -93,6 +97,8 @@ const FindWorkshop = () => {
                 <Input
                   placeholder="Search workshops, services, or locations..."
                   className="pl-12 h-14 text-lg border-secondary/20 hover:border-secondary/40 transition-colors"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
                 />
               </div>
               <Button 
@@ -107,7 +113,7 @@ const FindWorkshop = () => {
 
             {/* Advanced Filters */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              <Select>
+              <Select value={selectedServiceType} onValueChange={setSelectedServiceType}>
                 <SelectTrigger className="h-12">
                   <SelectValue placeholder="Service Type" />
                 </SelectTrigger>
@@ -119,7 +125,7 @@ const FindWorkshop = () => {
                 </SelectContent>
               </Select>
 
-              <Select>
+              <Select value={selectedPriceRange} onValueChange={setSelectedPriceRange}>
                 <SelectTrigger className="h-12">
                   <SelectValue placeholder="Price Range" />
                 </SelectTrigger>
@@ -131,7 +137,7 @@ const FindWorkshop = () => {
                 </SelectContent>
               </Select>
 
-              <Select>
+              <Select value={selectedRating} onValueChange={setSelectedRating}>
                 <SelectTrigger className="h-12">
                   <SelectValue placeholder="Rating" />
                 </SelectTrigger>
@@ -143,7 +149,7 @@ const FindWorkshop = () => {
                 </SelectContent>
               </Select>
 
-              <Select>
+              <Select value={selectedDistance} onValueChange={setSelectedDistance}>
                 <SelectTrigger className="h-12">
                   <SelectValue placeholder="Distance" />
                 </SelectTrigger>
