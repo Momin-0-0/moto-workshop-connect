@@ -221,9 +221,9 @@ const FindWorkshop = () => {
         </div>
 
         {/* Main Content */}
-        <div className="grid lg:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {showMap && (
-            <div className="lg:order-2 rounded-2xl overflow-hidden shadow-xl border border-secondary/20 animate-fade-in">
+            <div className="lg:col-span-3 rounded-2xl overflow-hidden shadow-xl border border-secondary/20 animate-fade-in h-[400px] mb-6">
               <WorkshopMap
                 workshops={selectedWorkshop ? [transformWorkshopForMap(selectedWorkshop)] : []}
                 selectedWorkshop={selectedWorkshop ? transformWorkshopForMap(selectedWorkshop) : null}
@@ -235,7 +235,7 @@ const FindWorkshop = () => {
               />
             </div>
           )}
-          <div className={`${showMap ? "lg:order-1" : ""} space-y-6 animate-fade-in`}>
+          <div className={`${showMap ? "" : "lg:col-span-3"} space-y-6 animate-fade-in`}>
             <WorkshopList
               onWorkshopSelect={(workshop) => {
                 const dbWorkshop: Workshop = {

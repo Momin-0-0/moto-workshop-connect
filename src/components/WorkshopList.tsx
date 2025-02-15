@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Star, MapPin, Phone, Clock, Award, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -82,7 +81,7 @@ export const WorkshopList = ({ onWorkshopSelect }: WorkshopListProps) => {
   const [selectedSpecialty, setSelectedSpecialty] = useState<string>("");
 
   return (
-    <div className="space-y-4">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {filteredWorkshops.map((workshop) => (
         <Card 
           key={workshop.id} 
@@ -90,71 +89,72 @@ export const WorkshopList = ({ onWorkshopSelect }: WorkshopListProps) => {
           onClick={() => onWorkshopSelect?.(workshop)}
         >
           <CardContent className="p-6">
-            <div className="flex flex-col md:flex-row gap-6">
-              {/* Workshop Info */}
-              <div className="flex-1 space-y-4">
-                <div className="flex justify-between items-start">
-                  <div>
-                    <h3 className="text-xl font-semibold group-hover:text-secondary transition-colors">
-                      {workshop.name}
-                    </h3>
-                    <div className="flex items-center gap-2 text-muted-foreground mt-1">
-                      <MapPin className="h-4 w-4" />
-                      <span className="text-sm">{workshop.distance}</span>
-                    </div>
-                  </div>
-                  <div className="flex items-center text-yellow-500 bg-yellow-50 px-2 py-1 rounded">
-                    <Star className="fill-current h-4 w-4" />
-                    <span className="ml-1 font-medium">{workshop.rating}</span>
+            <div className="flex flex-col gap-4">
+              {/* Workshop Header */}
+              <div className="flex justify-between items-start">
+                <div>
+                  <h3 className="text-xl font-semibold group-hover:text-secondary transition-colors line-clamp-1">
+                    {workshop.name}
+                  </h3>
+                  <div className="flex items-center gap-2 text-muted-foreground mt-1">
+                    <MapPin className="h-4 w-4" />
+                    <span className="text-sm">{workshop.distance}</span>
                   </div>
                 </div>
-
-                <div className="flex flex-wrap gap-2">
-                  {workshop.specialties.map((specialty) => (
-                    <Badge
-                      key={specialty}
-                      variant="outline"
-                      className="bg-secondary/5 hover:bg-secondary/10"
-                    >
-                      {specialty}
-                    </Badge>
-                  ))}
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm text-muted-foreground">
-                  <div className="flex items-center gap-2">
-                    <Phone className="h-4 w-4" />
-                    {workshop.phone}
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Clock className="h-4 w-4" />
-                    {workshop.availability[0]}
-                  </div>
-                </div>
-
-                <div className="flex flex-wrap gap-4">
-                  {workshop.certifications.map((cert) => (
-                    <div
-                      key={cert}
-                      className="flex items-center text-sm text-muted-foreground"
-                    >
-                      <Award className="h-4 w-4 mr-1 text-secondary" />
-                      {cert}
-                    </div>
-                  ))}
+                <div className="flex items-center text-yellow-500 bg-yellow-50 px-2 py-1 rounded">
+                  <Star className="fill-current h-4 w-4" />
+                  <span className="ml-1 font-medium">{workshop.rating}</span>
                 </div>
               </div>
 
-              {/* Actions */}
-              <div className="flex flex-col justify-between gap-4 min-w-[200px]">
+              {/* Specialties */}
+              <div className="flex flex-wrap gap-1.5">
+                {workshop.specialties.map((specialty) => (
+                  <Badge
+                    key={specialty}
+                    variant="outline"
+                    className="bg-secondary/5 hover:bg-secondary/10"
+                  >
+                    {specialty}
+                  </Badge>
+                ))}
+              </div>
+
+              {/* Contact Info */}
+              <div className="space-y-2 text-sm text-muted-foreground">
+                <div className="flex items-center gap-2">
+                  <Phone className="h-4 w-4" />
+                  {workshop.phone}
+                </div>
+                <div className="flex items-center gap-2">
+                  <Clock className="h-4 w-4" />
+                  {workshop.availability[0]}
+                </div>
+              </div>
+
+              {/* Certifications */}
+              <div className="flex flex-wrap gap-2">
+                {workshop.certifications.map((cert) => (
+                  <div
+                    key={cert}
+                    className="flex items-center text-sm text-muted-foreground"
+                  >
+                    <Award className="h-4 w-4 mr-1 text-secondary" />
+                    {cert}
+                  </div>
+                ))}
+              </div>
+
+              {/* Price and Action */}
+              <div className="flex items-center justify-between pt-2">
                 <div className="text-right">
-                  <div className="text-sm text-muted-foreground">Starting from</div>
-                  <div className="text-2xl font-bold text-secondary">
+                  <div className="text-sm text-muted-foreground">From</div>
+                  <div className="text-xl font-bold text-secondary">
                     ${workshop.priceRange[0]}
                   </div>
                 </div>
                 <Button
-                  className="w-full group/button"
+                  className="group/button"
                   onClick={(e) => {
                     e.stopPropagation();
                     navigate(`/booking/${workshop.id}`);
@@ -170,7 +170,7 @@ export const WorkshopList = ({ onWorkshopSelect }: WorkshopListProps) => {
       ))}
 
       {filteredWorkshops.length === 0 && (
-        <div className="text-center py-12 bg-secondary/5 rounded-lg">
+        <div className="col-span-full text-center py-12 bg-secondary/5 rounded-lg">
           <h3 className="text-xl font-semibold mb-2">No Workshops Found</h3>
           <p className="text-muted-foreground">
             Try adjusting your filters or search criteria
@@ -178,5 +178,5 @@ export const WorkshopList = ({ onWorkshopSelect }: WorkshopListProps) => {
         </div>
       )}
     </div>
-  );
+);
 };
