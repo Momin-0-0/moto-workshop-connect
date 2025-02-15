@@ -2,17 +2,30 @@
 import { Navbar } from "@/components/Navbar";
 import { WorkshopMap } from "@/components/WorkshopMap";
 import { WorkshopList } from "@/components/WorkshopList";
-import { Search, MapPin, LayoutGrid, Map, Clock, Star, Wrench, AlertTriangle } from "lucide-react";
+import { 
+  Search, MapPin, LayoutGrid, Map, Clock, Star, 
+  Wrench, AlertTriangle, Filter, ArrowRight, SlidersHorizontal 
+} from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import type { Workshop } from "@/types/database.types";
 import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Card, CardContent } from "@/components/ui/card";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const FindWorkshop = () => {
   const [selectedWorkshop, setSelectedWorkshop] = useState<Workshop | null>(null);
   const [showMap, setShowMap] = useState(true);
+  const [activeFilters, setActiveFilters] = useState<string[]>([]);
   const { toast } = useToast();
 
   const handleLocationAccess = () => {
@@ -40,7 +53,6 @@ const FindWorkshop = () => {
     }
   };
 
-  // Transform Workshop type for map component
   const transformWorkshopForMap = (workshop: Workshop) => ({
     id: parseInt(workshop.id),
     name: workshop.name,
@@ -49,56 +61,163 @@ const FindWorkshop = () => {
     rating: workshop.rating
   });
 
+  const toggleFilter = (filter: string) => {
+    setActiveFilters(prev => 
+      prev.includes(filter) 
+        ? prev.filter(f => f !== filter)
+        : [...prev, filter]
+    );
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
       <main className="container mx-auto px-4 py-8 space-y-8">
-        <div className="text-center space-y-4 max-w-2xl mx-auto animate-fade-in">
-          <h1 className="text-4xl font-bold tracking-tight bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-            Find a Workshop
+        {/* Hero Section */}
+        <div className="text-center space-y-4 max-w-3xl mx-auto animate-fade-in">
+          <h1 className="text-5xl font-bold tracking-tight bg-gradient-to-r from-primary via-secondary to-primary bg-clip-text text-transparent">
+            Find Your Perfect Workshop
           </h1>
-          <p className="text-muted-foreground">
-            Discover trusted motorcycle workshops in your area. Compare ratings, services, and book appointments instantly.
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+            Connect with expert mechanics and certified workshops in your area. 
+            Compare services, read reviews, and book appointments instantly.
           </p>
         </div>
 
-        <div className="flex flex-col sm:flex-row gap-4 animate-fade-in">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="Search by workshop name or service..."
-              className="pl-10 h-12"
-            />
-          </div>
-          <Button 
-            onClick={handleLocationAccess}
-            className="flex items-center gap-2 bg-secondary hover:bg-secondary/90 h-12"
-          >
-            <MapPin className="h-4 w-4" />
-            Near Me
-          </Button>
-          <Button
-            variant="outline"
-            onClick={() => setShowMap(!showMap)}
-            className="flex items-center gap-2 h-12 hover:bg-secondary/10"
-          >
-            {showMap ? (
-              <>
-                <LayoutGrid className="h-4 w-4" />
-                List View
-              </>
-            ) : (
-              <>
-                <Map className="h-4 w-4" />
+        {/* Search and Quick Actions */}
+        <Card className="border-secondary/20 shadow-lg animate-fade-in">
+          <CardContent className="p-6 space-y-6">
+            <div className="flex flex-col sm:flex-row gap-4">
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-3.5 h-5 w-5 text-muted-foreground" />
+                <Input
+                  placeholder="Search workshops, services, or locations..."
+                  className="pl-12 h-14 text-lg border-secondary/20 hover:border-secondary/40 transition-colors"
+                />
+              </div>
+              <Button 
+                onClick={handleLocationAccess}
+                className="flex items-center gap-2 bg-secondary hover:bg-secondary/90 h-14 px-6 text-white font-medium transition-all duration-300 group"
+              >
+                <MapPin className="h-5 w-5" />
+                Near Me
+                <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
+              </Button>
+            </div>
+
+            {/* Advanced Filters */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              <Select>
+                <SelectTrigger className="h-12">
+                  <SelectValue placeholder="Service Type" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Services</SelectItem>
+                  <SelectItem value="maintenance">Maintenance</SelectItem>
+                  <SelectItem value="repair">Repair</SelectItem>
+                  <SelectItem value="customization">Customization</SelectItem>
+                </SelectContent>
+              </Select>
+
+              <Select>
+                <SelectTrigger className="h-12">
+                  <SelectValue placeholder="Price Range" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Prices</SelectItem>
+                  <SelectItem value="budget">Budget Friendly</SelectItem>
+                  <SelectItem value="mid">Mid Range</SelectItem>
+                  <SelectItem value="premium">Premium</SelectItem>
+                </SelectContent>
+              </Select>
+
+              <Select>
+                <SelectTrigger className="h-12">
+                  <SelectValue placeholder="Rating" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Ratings</SelectItem>
+                  <SelectItem value="4plus">4+ Stars</SelectItem>
+                  <SelectItem value="4.5plus">4.5+ Stars</SelectItem>
+                  <SelectItem value="5">5 Stars</SelectItem>
+                </SelectContent>
+              </Select>
+
+              <Select>
+                <SelectTrigger className="h-12">
+                  <SelectValue placeholder="Distance" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Any Distance</SelectItem>
+                  <SelectItem value="5">Within 5 km</SelectItem>
+                  <SelectItem value="10">Within 10 km</SelectItem>
+                  <SelectItem value="20">Within 20 km</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Quick Filters */}
+            <div className="flex flex-wrap gap-2">
+              <QuickFilterBadge 
+                icon={Clock} 
+                active={activeFilters.includes('open')}
+                onClick={() => toggleFilter('open')}
+              >
+                Open Now
+              </QuickFilterBadge>
+              <QuickFilterBadge 
+                icon={Star}
+                active={activeFilters.includes('rated')}
+                onClick={() => toggleFilter('rated')}
+              >
+                Highly Rated
+              </QuickFilterBadge>
+              <QuickFilterBadge 
+                icon={MapPin}
+                active={activeFilters.includes('nearby')}
+                onClick={() => toggleFilter('nearby')}
+              >
+                Within 5km
+              </QuickFilterBadge>
+              <QuickFilterBadge 
+                icon={AlertTriangle}
+                active={activeFilters.includes('emergency')}
+                onClick={() => toggleFilter('emergency')}
+              >
+                Emergency Service
+              </QuickFilterBadge>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* View Toggle */}
+        <div className="flex justify-center">
+          <Tabs defaultValue={showMap ? "map" : "list"} className="w-[400px]">
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger 
+                value="map"
+                onClick={() => setShowMap(true)}
+                className="data-[state=active]:bg-secondary data-[state=active]:text-white"
+              >
+                <Map className="h-4 w-4 mr-2" />
                 Map View
-              </>
-            )}
-          </Button>
+              </TabsTrigger>
+              <TabsTrigger 
+                value="list"
+                onClick={() => setShowMap(false)}
+                className="data-[state=active]:bg-secondary data-[state=active]:text-white"
+              >
+                <LayoutGrid className="h-4 w-4 mr-2" />
+                List View
+              </TabsTrigger>
+            </TabsList>
+          </Tabs>
         </div>
-        
+
+        {/* Main Content */}
         <div className="grid lg:grid-cols-2 gap-8">
           {showMap && (
-            <div className="lg:order-2 rounded-xl overflow-hidden shadow-lg border animate-fade-in">
+            <div className="lg:order-2 rounded-2xl overflow-hidden shadow-xl border border-secondary/20 animate-fade-in">
               <WorkshopMap
                 workshops={selectedWorkshop ? [transformWorkshopForMap(selectedWorkshop)] : []}
                 selectedWorkshop={selectedWorkshop ? transformWorkshopForMap(selectedWorkshop) : null}
@@ -110,52 +229,38 @@ const FindWorkshop = () => {
               />
             </div>
           )}
-          <div className={`${showMap ? "lg:order-1" : ""} space-y-6`}>
-            <div className="bg-card rounded-xl p-6 shadow-sm border space-y-4 animate-fade-in">
-              <h2 className="font-semibold text-lg flex items-center gap-2">
-                <Wrench className="h-5 w-5 text-secondary" />
-                Quick Filters
-              </h2>
-              <div className="flex flex-wrap gap-2">
-                <QuickFilterBadge icon={Clock}>Open Now</QuickFilterBadge>
-                <QuickFilterBadge icon={Star}>Highly Rated</QuickFilterBadge>
-                <QuickFilterBadge icon={MapPin}>Within 5km</QuickFilterBadge>
-                <QuickFilterBadge icon={AlertTriangle}>Emergency Service</QuickFilterBadge>
-              </div>
-            </div>
-            <div className="animate-fade-in">
-              <WorkshopList
-                onWorkshopSelect={(workshop) => {
-                  const dbWorkshop: Workshop = {
-                    id: workshop.id.toString(),
-                    created_at: new Date().toISOString(),
-                    name: workshop.name,
-                    description: "",
-                    address: workshop.address,
-                    phone: workshop.phone,
-                    email: "",
-                    owner_id: "",
-                    latitude: workshop.latitude,
-                    longitude: workshop.longitude,
-                    rating: workshop.rating,
-                    specialties: workshop.specialties,
-                    price_range: {
-                      min: workshop.priceRange[0],
-                      max: workshop.priceRange[1]
-                    },
-                    availability: {
-                      days: workshop.availability[0].split(":")[0].split(", "),
-                      hours: {
-                        open: workshop.availability[0].split(": ")[1].split("-")[0],
-                        close: workshop.availability[0].split(": ")[1].split("-")[1]
-                      }
-                    },
-                    certifications: workshop.certifications
-                  };
-                  setSelectedWorkshop(dbWorkshop);
-                }}
-              />
-            </div>
+          <div className={`${showMap ? "lg:order-1" : ""} space-y-6 animate-fade-in`}>
+            <WorkshopList
+              onWorkshopSelect={(workshop) => {
+                const dbWorkshop: Workshop = {
+                  id: workshop.id.toString(),
+                  created_at: new Date().toISOString(),
+                  name: workshop.name,
+                  description: "",
+                  address: workshop.address,
+                  phone: workshop.phone,
+                  email: "",
+                  owner_id: "",
+                  latitude: workshop.latitude,
+                  longitude: workshop.longitude,
+                  rating: workshop.rating,
+                  specialties: workshop.specialties,
+                  price_range: {
+                    min: workshop.priceRange[0],
+                    max: workshop.priceRange[1]
+                  },
+                  availability: {
+                    days: workshop.availability[0].split(":")[0].split(", "),
+                    hours: {
+                      open: workshop.availability[0].split(": ")[1].split("-")[0],
+                      close: workshop.availability[0].split(": ")[1].split("-")[1]
+                    }
+                  },
+                  certifications: workshop.certifications
+                };
+                setSelectedWorkshop(dbWorkshop);
+              }}
+            />
           </div>
         </div>
       </main>
@@ -163,19 +268,30 @@ const FindWorkshop = () => {
   );
 };
 
-// Quick Filter Badge Component
+// Enhanced Quick Filter Badge Component
 const QuickFilterBadge = ({ 
   children, 
-  icon: Icon 
+  icon: Icon,
+  active = false,
+  onClick
 }: { 
   children: React.ReactNode; 
   icon: React.ComponentType<any>;
+  active?: boolean;
+  onClick?: () => void;
 }) => (
   <Badge 
-    variant="secondary" 
-    className="px-4 py-2 hover:bg-secondary/20 cursor-pointer transition-colors"
+    variant={active ? "secondary" : "outline"}
+    className={`
+      px-4 py-2 cursor-pointer transition-all duration-300
+      ${active 
+        ? 'bg-secondary text-white hover:bg-secondary/90' 
+        : 'hover:bg-secondary/10'
+      }
+    `}
+    onClick={onClick}
   >
-    <Icon className="h-4 w-4 mr-2" />
+    <Icon className={`h-4 w-4 mr-2 ${active ? 'text-white' : 'text-secondary'}`} />
     {children}
   </Badge>
 );
