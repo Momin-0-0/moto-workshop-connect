@@ -221,9 +221,9 @@ const FindWorkshop = () => {
         </div>
 
         {/* Main Content */}
-        <div className="container mx-auto">
+        <div className="container mx-auto px-4 space-y-8">
           {showMap && (
-            <div className="w-full rounded-2xl overflow-hidden shadow-xl border border-secondary/20 animate-fade-in h-[400px] mb-6">
+            <div className="w-full rounded-2xl overflow-hidden shadow-xl border border-secondary/20 animate-fade-in h-[500px] mb-6">
               <WorkshopMap
                 workshops={selectedWorkshop ? [transformWorkshopForMap(selectedWorkshop)] : []}
                 selectedWorkshop={selectedWorkshop ? transformWorkshopForMap(selectedWorkshop) : null}
@@ -235,7 +235,30 @@ const FindWorkshop = () => {
               />
             </div>
           )}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
+
+          {/* Results Summary */}
+          <div className="flex flex-col sm:flex-row justify-between items-center gap-4 bg-muted/30 p-4 rounded-lg">
+            <div className="space-y-1">
+              <h2 className="text-xl font-semibold">Available Workshops</h2>
+              <p className="text-muted-foreground">
+                Showing {filteredWorkshops?.length || 0} workshops in your area
+              </p>
+            </div>
+            <div className="flex items-center gap-2">
+              <Select value={selectedDistance} onValueChange={setSelectedDistance}>
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue placeholder="Sort by distance" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="nearest">Nearest first</SelectItem>
+                  <SelectItem value="farthest">Farthest first</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          {/* Workshop Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             <WorkshopList
               onWorkshopSelect={(workshop) => {
                 const dbWorkshop: Workshop = {
@@ -267,6 +290,23 @@ const FindWorkshop = () => {
                 setSelectedWorkshop(dbWorkshop);
               }}
             />
+          </div>
+
+          {/* Pagination or Load More */}
+          <div className="flex justify-center mt-8">
+            <Button 
+              variant="outline" 
+              className="w-full max-w-xs"
+              onClick={() => {
+                toast({
+                  title: "Loading more workshops...",
+                  description: "Fetching additional results for your area"
+                });
+              }}
+            >
+              Load More Workshops
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Button>
           </div>
         </div>
       </main>
