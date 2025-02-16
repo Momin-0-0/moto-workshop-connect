@@ -7,7 +7,7 @@ import {
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import type { Workshop } from "@/types/database.types";
 import { Badge } from "@/components/ui/badge";
@@ -30,7 +30,57 @@ const FindWorkshop = () => {
   const [selectedRating, setSelectedRating] = useState("all");
   const [selectedDistance, setSelectedDistance] = useState("all");
   const [activeFilters, setActiveFilters] = useState<string[]>([]);
+  const [workshops, setWorkshops] = useState<Workshop[]>([]);
   const { toast } = useToast();
+
+  // Calculate filtered workshops based on search and filter criteria
+  const filteredWorkshops = workshops.filter(workshop => {
+    let matches = true;
+
+    // Search query filter
+    if (searchQuery) {
+      const query = searchQuery.toLowerCase();
+      matches = matches && (
+        workshop.name.toLowerCase().includes(query) ||
+        workshop.description.toLowerCase().includes(query) ||
+        workshop.address.toLowerCase().includes(query)
+      );
+    }
+
+    // Service type filter
+    if (selectedServiceType !== 'all') {
+      matches = matches && workshop.specialties.some(
+        specialty => specialty.toLowerCase().includes(selectedServiceType.toLowerCase())
+      );
+    }
+
+    // Rating filter
+    if (selectedRating !== 'all') {
+      const minRating = parseFloat(selectedRating.replace('plus', ''));
+      matches = matches && workshop.rating >= minRating;
+    }
+
+    // Distance filter
+    if (selectedDistance !== 'all') {
+      const maxDistance = parseInt(selectedDistance);
+      // Note: Actual distance calculation would go here
+      // For now, we'll just use a placeholder check
+      matches = matches && true; // Placeholder
+    }
+
+    // Active quick filters
+    if (activeFilters.includes('open')) {
+      // Check if workshop is currently open
+      // This would need actual business hour comparison logic
+      matches = matches && true; // Placeholder
+    }
+
+    if (activeFilters.includes('rated')) {
+      matches = matches && workshop.rating >= 4.5;
+    }
+
+    return matches;
+  });
 
   const handleLocationAccess = () => {
     if (navigator.geolocation) {
@@ -72,6 +122,34 @@ const FindWorkshop = () => {
         : [...prev, filter]
     );
   };
+
+  useEffect(() => {
+    // This would typically be an API call
+    // For now, we'll set some sample data
+    setWorkshops([
+      {
+        id: "1",
+        created_at: new Date().toISOString(),
+        name: "Pro Auto Workshop",
+        description: "Professional auto repair and maintenance services",
+        address: "123 Main St",
+        phone: "+1 234-567-8900",
+        email: "contact@proauto.com",
+        owner_id: "owner1",
+        latitude: 40.7128,
+        longitude: -74.0060,
+        rating: 4.8,
+        specialties: ["General Service", "Engine Repair"],
+        price_range: { min: 50, max: 500 },
+        availability: {
+          days: ["Mon", "Tue", "Wed", "Thu", "Fri"],
+          hours: { open: "09:00", close: "18:00" }
+        },
+        certifications: ["ASE Certified"]
+      },
+      // Add more sample workshops as needed
+    ]);
+  }, []);
 
   return (
     <div className="min-h-screen bg-background">
@@ -265,24 +343,24 @@ const FindWorkshop = () => {
                   id: workshop.id.toString(),
                   created_at: new Date().toISOString(),
                   name: workshop.name,
-                  description: "",
+                  description: workshop.description,
                   address: workshop.address,
                   phone: workshop.phone,
-                  email: "",
-                  owner_id: "",
+                  email: workshop.email,
+                  owner_id: workshop.owner_id,
                   latitude: workshop.latitude,
                   longitude: workshop.longitude,
                   rating: workshop.rating,
                   specialties: workshop.specialties,
                   price_range: {
-                    min: workshop.priceRange[0],
-                    max: workshop.priceRange[1]
+                    min: workshop.price_range.min,
+                    max: workshop.price_range.max
                   },
                   availability: {
-                    days: workshop.availability[0].split(":")[0].split(", "),
+                    days: workshop.availability.days,
                     hours: {
-                      open: workshop.availability[0].split(": ")[1].split("-")[0],
-                      close: workshop.availability[0].split(": ")[1].split("-")[1]
+                      open: workshop.availability.hours.open,
+                      close: workshop.availability.hours.close
                     }
                   },
                   certifications: workshop.certifications
