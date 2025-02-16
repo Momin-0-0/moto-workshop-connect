@@ -1,3 +1,4 @@
+
 import { Navbar } from "@/components/Navbar";
 import { WorkshopMap } from "@/components/WorkshopMap";
 import { WorkshopList } from "@/components/WorkshopList";
@@ -31,13 +32,13 @@ const FindWorkshop = () => {
   const [selectedDistance, setSelectedDistance] = useState("all");
   const [activeFilters, setActiveFilters] = useState<string[]>([]);
   const [workshops, setWorkshops] = useState<Workshop[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
 
   // Calculate filtered workshops based on search and filter criteria
   const filteredWorkshops = workshops.filter(workshop => {
     let matches = true;
 
-    // Search query filter
     if (searchQuery) {
       const query = searchQuery.toLowerCase();
       matches = matches && (
@@ -47,32 +48,24 @@ const FindWorkshop = () => {
       );
     }
 
-    // Service type filter
     if (selectedServiceType !== 'all') {
       matches = matches && workshop.specialties.some(
         specialty => specialty.toLowerCase().includes(selectedServiceType.toLowerCase())
       );
     }
 
-    // Rating filter
     if (selectedRating !== 'all') {
       const minRating = parseFloat(selectedRating.replace('plus', ''));
       matches = matches && workshop.rating >= minRating;
     }
 
-    // Distance filter
     if (selectedDistance !== 'all') {
       const maxDistance = parseInt(selectedDistance);
-      // Note: Actual distance calculation would go here
-      // For now, we'll just use a placeholder check
-      matches = matches && true; // Placeholder
+      matches = matches && true; // Placeholder for distance calculation
     }
 
-    // Active quick filters
     if (activeFilters.includes('open')) {
-      // Check if workshop is currently open
-      // This would need actual business hour comparison logic
-      matches = matches && true; // Placeholder
+      matches = matches && true; // Placeholder for business hours check
     }
 
     if (activeFilters.includes('rated')) {
@@ -124,40 +117,54 @@ const FindWorkshop = () => {
   };
 
   useEffect(() => {
-    // This would typically be an API call
-    // For now, we'll set some sample data
-    setWorkshops([
-      {
-        id: "1",
-        created_at: new Date().toISOString(),
-        name: "Pro Auto Workshop",
-        description: "Professional auto repair and maintenance services",
-        address: "123 Main St",
-        phone: "+1 234-567-8900",
-        email: "contact@proauto.com",
-        owner_id: "owner1",
-        latitude: 40.7128,
-        longitude: -74.0060,
-        rating: 4.8,
-        specialties: ["General Service", "Engine Repair"],
-        price_range: { min: 50, max: 500 },
-        availability: {
-          days: ["Mon", "Tue", "Wed", "Thu", "Fri"],
-          hours: { open: "09:00", close: "18:00" }
-        },
-        certifications: ["ASE Certified"]
-      },
-      // Add more sample workshops as needed
-    ]);
-  }, []);
+    const loadWorkshops = async () => {
+      setIsLoading(true);
+      try {
+        // Simulate API call
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        setWorkshops([
+          {
+            id: "1",
+            created_at: new Date().toISOString(),
+            name: "Pro Auto Workshop",
+            description: "Professional auto repair and maintenance services",
+            address: "123 Main St",
+            phone: "+1 234-567-8900",
+            email: "contact@proauto.com",
+            owner_id: "owner1",
+            latitude: 40.7128,
+            longitude: -74.0060,
+            rating: 4.8,
+            specialties: ["General Service", "Engine Repair"],
+            price_range: { min: 50, max: 500 },
+            availability: {
+              days: ["Mon", "Tue", "Wed", "Thu", "Fri"],
+              hours: { open: "09:00", close: "18:00" }
+            },
+            certifications: ["ASE Certified"]
+          },
+        ]);
+      } catch (error) {
+        toast({
+          title: "Error loading workshops",
+          description: "Please try again later",
+          variant: "destructive",
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadWorkshops();
+  }, [toast]);
 
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
       <main className="container mx-auto px-4 py-8 space-y-8">
-        {/* Hero Section */}
+        {/* Hero Section with improved animation */}
         <div className="text-center space-y-4 max-w-3xl mx-auto animate-fade-in">
-          <h1 className="text-5xl font-bold tracking-tight bg-gradient-to-r from-primary via-secondary to-primary bg-clip-text text-transparent">
+          <h1 className="text-4xl md:text-5xl font-bold tracking-tight bg-gradient-to-r from-primary via-secondary to-primary bg-clip-text text-transparent">
             Find Your Perfect Workshop
           </h1>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
@@ -166,8 +173,8 @@ const FindWorkshop = () => {
           </p>
         </div>
 
-        {/* Search and Quick Actions */}
-        <Card className="border-secondary/20 shadow-lg animate-fade-in">
+        {/* Search and Quick Actions with improved shadow and hover effects */}
+        <Card className="border-secondary/20 shadow-lg transition-all duration-300 hover:shadow-xl">
           <CardContent className="p-6 space-y-6">
             <div className="flex flex-col sm:flex-row gap-4">
               <div className="relative flex-1">
@@ -189,7 +196,7 @@ const FindWorkshop = () => {
               </Button>
             </div>
 
-            {/* Advanced Filters */}
+            {/* Advanced Filters with improved layout */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               <Select value={selectedServiceType} onValueChange={setSelectedServiceType}>
                 <SelectTrigger className="h-12">
@@ -240,7 +247,7 @@ const FindWorkshop = () => {
               </Select>
             </div>
 
-            {/* Quick Filters */}
+            {/* Quick Filters with improved animation */}
             <div className="flex flex-wrap gap-2">
               <QuickFilterBadge 
                 icon={Clock} 
@@ -274,7 +281,7 @@ const FindWorkshop = () => {
           </CardContent>
         </Card>
 
-        {/* View Toggle */}
+        {/* View Toggle with improved styling */}
         <div className="flex justify-center">
           <Tabs defaultValue={showMap ? "map" : "list"} className="w-[400px]">
             <TabsList className="grid w-full grid-cols-2">
@@ -298,95 +305,104 @@ const FindWorkshop = () => {
           </Tabs>
         </div>
 
-        {/* Main Content */}
-        <div className="container mx-auto px-4 space-y-8">
-          {showMap && (
-            <div className="w-full rounded-2xl overflow-hidden shadow-xl border border-secondary/20 animate-fade-in h-[500px] mb-6">
-              <WorkshopMap
-                workshops={selectedWorkshop ? [transformWorkshopForMap(selectedWorkshop)] : []}
-                selectedWorkshop={selectedWorkshop ? transformWorkshopForMap(selectedWorkshop) : null}
-                onWorkshopSelect={(mapWorkshop) => {
-                  if (selectedWorkshop) {
-                    setSelectedWorkshop(selectedWorkshop);
-                  }
+        {/* Loading State */}
+        {isLoading ? (
+          <div className="flex items-center justify-center py-12">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-secondary"></div>
+          </div>
+        ) : (
+          <div className="space-y-8 animate-fade-in">
+            {/* Map View */}
+            {showMap && (
+              <div className="w-full rounded-2xl overflow-hidden shadow-xl border border-secondary/20 h-[500px] mb-6">
+                <WorkshopMap
+                  workshops={selectedWorkshop ? [transformWorkshopForMap(selectedWorkshop)] : []}
+                  selectedWorkshop={selectedWorkshop ? transformWorkshopForMap(selectedWorkshop) : null}
+                  onWorkshopSelect={(mapWorkshop) => {
+                    if (selectedWorkshop) {
+                      setSelectedWorkshop(selectedWorkshop);
+                    }
+                  }}
+                />
+              </div>
+            )}
+
+            {/* Results Summary with improved styling */}
+            <div className="flex flex-col sm:flex-row justify-between items-center gap-4 bg-muted/30 p-4 rounded-lg animate-fade-in">
+              <div className="space-y-1">
+                <h2 className="text-xl font-semibold">Available Workshops</h2>
+                <p className="text-muted-foreground">
+                  Showing {filteredWorkshops?.length || 0} workshops in your area
+                </p>
+              </div>
+              <div className="flex items-center gap-2">
+                <Select value={selectedDistance} onValueChange={setSelectedDistance}>
+                  <SelectTrigger className="w-[180px]">
+                    <SelectValue placeholder="Sort by distance" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="nearest">Nearest first</SelectItem>
+                    <SelectItem value="farthest">Farthest first</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            {/* Workshop Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              <WorkshopList
+                onWorkshopSelect={(workshop) => {
+                  const dbWorkshop: Workshop = {
+                    id: workshop.id.toString(),
+                    created_at: new Date().toISOString(),
+                    name: workshop.name,
+                    description: "Professional auto services",
+                    address: workshop.address,
+                    phone: workshop.phone,
+                    email: `contact@${workshop.name.toLowerCase().replace(/\s+/g, '')}.com`,
+                    owner_id: `owner_${workshop.id}`,
+                    latitude: workshop.latitude,
+                    longitude: workshop.longitude,
+                    rating: workshop.rating,
+                    specialties: workshop.specialties,
+                    price_range: {
+                      min: workshop.priceRange[0],
+                      max: workshop.priceRange[1]
+                    },
+                    availability: {
+                      days: ["Mon", "Tue", "Wed", "Thu", "Fri"],
+                      hours: {
+                        open: "09:00",
+                        close: "18:00"
+                      }
+                    },
+                    certifications: workshop.certifications
+                  };
+                  setSelectedWorkshop(dbWorkshop);
                 }}
               />
             </div>
-          )}
 
-          {/* Results Summary */}
-          <div className="flex flex-col sm:flex-row justify-between items-center gap-4 bg-muted/30 p-4 rounded-lg">
-            <div className="space-y-1">
-              <h2 className="text-xl font-semibold">Available Workshops</h2>
-              <p className="text-muted-foreground">
-                Showing {filteredWorkshops?.length || 0} workshops in your area
-              </p>
-            </div>
-            <div className="flex items-center gap-2">
-              <Select value={selectedDistance} onValueChange={setSelectedDistance}>
-                <SelectTrigger className="w-[180px]">
-                  <SelectValue placeholder="Sort by distance" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="nearest">Nearest first</SelectItem>
-                  <SelectItem value="farthest">Farthest first</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+            {/* Load More Button */}
+            {filteredWorkshops.length > 0 && (
+              <div className="flex justify-center mt-8">
+                <Button 
+                  variant="outline" 
+                  className="w-full max-w-xs group"
+                  onClick={() => {
+                    toast({
+                      title: "Loading more workshops...",
+                      description: "Fetching additional results for your area"
+                    });
+                  }}
+                >
+                  Load More Workshops
+                  <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                </Button>
+              </div>
+            )}
           </div>
-
-          {/* Workshop Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            <WorkshopList
-              onWorkshopSelect={(workshop) => {
-                const dbWorkshop: Workshop = {
-                  id: workshop.id.toString(),
-                  created_at: new Date().toISOString(),
-                  name: workshop.name,
-                  description: "Professional auto services", // Default description
-                  address: workshop.address,
-                  phone: workshop.phone,
-                  email: `contact@${workshop.name.toLowerCase().replace(/\s+/g, '')}.com`, // Generated email
-                  owner_id: `owner_${workshop.id}`, // Generated owner_id
-                  latitude: workshop.latitude,
-                  longitude: workshop.longitude,
-                  rating: workshop.rating,
-                  specialties: workshop.specialties,
-                  price_range: {
-                    min: 50, // Default minimum price
-                    max: 500 // Default maximum price
-                  },
-                  availability: {
-                    days: ["Mon", "Tue", "Wed", "Thu", "Fri"], // Default working days
-                    hours: {
-                      open: "09:00",
-                      close: "18:00"
-                    }
-                  },
-                  certifications: workshop.certifications
-                };
-                setSelectedWorkshop(dbWorkshop);
-              }}
-            />
-          </div>
-
-          {/* Pagination or Load More */}
-          <div className="flex justify-center mt-8">
-            <Button 
-              variant="outline" 
-              className="w-full max-w-xs"
-              onClick={() => {
-                toast({
-                  title: "Loading more workshops...",
-                  description: "Fetching additional results for your area"
-                });
-              }}
-            >
-              Load More Workshops
-              <ArrowRight className="ml-2 h-4 w-4" />
-            </Button>
-          </div>
-        </div>
+        )}
       </main>
     </div>
   );
@@ -407,7 +423,7 @@ const QuickFilterBadge = ({
   <Badge 
     variant={active ? "secondary" : "outline"}
     className={`
-      px-4 py-2 cursor-pointer transition-all duration-300
+      px-4 py-2 cursor-pointer transition-all duration-300 hover:scale-105
       ${active 
         ? 'bg-secondary text-white hover:bg-secondary/90' 
         : 'hover:bg-secondary/10'
