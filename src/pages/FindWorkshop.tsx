@@ -1,19 +1,26 @@
-
 import { Navbar } from "@/components/Navbar";
 import { WorkshopMap } from "@/components/WorkshopMap";
 import { WorkshopList } from "@/components/WorkshopList";
-import { 
-  Search, MapPin, LayoutGrid, Map, Clock, Star, 
-  Wrench, AlertTriangle, Filter, ArrowRight, SlidersHorizontal 
-} from "lucide-react";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import type { Workshop } from "@/types/database.types";
+import { Button } from "@/components/ui/button";
+import { ArrowRight } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+
+// Import new components
+import { HeroSection } from "@/components/workshop/HeroSection";
+import { SearchSection } from "@/components/workshop/SearchSection";
+import { FilterSection } from "@/components/workshop/FilterSection";
+import { ViewToggle } from "@/components/workshop/ViewToggle";
+import { ResultsSummary } from "@/components/workshop/ResultsSummary";
+import { 
+  Search, MapPin, LayoutGrid, Map, Clock, Star, 
+  Wrench, AlertTriangle, Filter, SlidersHorizontal 
+} from "lucide-react";
+import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Card, CardContent } from "@/components/ui/card";
 import {
   Select,
   SelectContent,
@@ -35,7 +42,7 @@ const FindWorkshop = () => {
   const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
 
-  // Calculate filtered workshops based on search and filter criteria
+  // Keep existing filterWorkshops logic
   const filteredWorkshops = workshops.filter(workshop => {
     let matches = true;
 
@@ -75,29 +82,12 @@ const FindWorkshop = () => {
     return matches;
   });
 
-  const handleLocationAccess = () => {
-    if (navigator.geolocation) {
-      toast({
-        title: "Accessing location...",
-        description: "Please wait while we find workshops near you",
-      });
-      
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          toast({
-            title: "Location found",
-            description: "Showing workshops in your area",
-          });
-        },
-        () => {
-          toast({
-            title: "Location access denied",
-            description: "Please enable location access to find nearby workshops",
-            variant: "destructive",
-          });
-        }
-      );
-    }
+  const toggleFilter = (filter: string) => {
+    setActiveFilters(prev => 
+      prev.includes(filter) 
+        ? prev.filter(f => f !== filter)
+        : [...prev, filter]
+    );
   };
 
   const transformWorkshopForMap = (workshop: Workshop) => ({
@@ -107,14 +97,6 @@ const FindWorkshop = () => {
     longitude: workshop.longitude,
     rating: workshop.rating
   });
-
-  const toggleFilter = (filter: string) => {
-    setActiveFilters(prev => 
-      prev.includes(filter) 
-        ? prev.filter(f => f !== filter)
-        : [...prev, filter]
-    );
-  };
 
   useEffect(() => {
     const loadWorkshops = async () => {
@@ -162,157 +144,41 @@ const FindWorkshop = () => {
     <div className="min-h-screen bg-background">
       <Navbar />
       <main className="container mx-auto px-4 py-8 space-y-8">
-        {/* Hero Section with improved animation */}
-        <div className="text-center space-y-4 max-w-3xl mx-auto animate-fade-in">
-          <h1 className="text-4xl md:text-5xl font-bold tracking-tight bg-gradient-to-r from-primary via-secondary to-primary bg-clip-text text-transparent">
-            Find Your Perfect Workshop
-          </h1>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Connect with expert mechanics and certified workshops in your area. 
-            Compare services, read reviews, and book appointments instantly.
-          </p>
-        </div>
+        <HeroSection />
 
-        {/* Search and Quick Actions with improved shadow and hover effects */}
         <Card className="border-secondary/20 shadow-lg transition-all duration-300 hover:shadow-xl">
           <CardContent className="p-6 space-y-6">
-            <div className="flex flex-col sm:flex-row gap-4">
-              <div className="relative flex-1">
-                <Search className="absolute left-3 top-3.5 h-5 w-5 text-muted-foreground" />
-                <Input
-                  placeholder="Search workshops, services, or locations..."
-                  className="pl-12 h-14 text-lg border-secondary/20 hover:border-secondary/40 transition-colors"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                />
-              </div>
-              <Button 
-                onClick={handleLocationAccess}
-                className="flex items-center gap-2 bg-secondary hover:bg-secondary/90 h-14 px-6 text-white font-medium transition-all duration-300 group"
-              >
-                <MapPin className="h-5 w-5" />
-                Near Me
-                <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
-              </Button>
-            </div>
+            <SearchSection 
+              searchQuery={searchQuery}
+              onSearchChange={setSearchQuery}
+            />
 
-            {/* Advanced Filters with improved layout */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              <Select value={selectedServiceType} onValueChange={setSelectedServiceType}>
-                <SelectTrigger className="h-12">
-                  <SelectValue placeholder="Service Type" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Services</SelectItem>
-                  <SelectItem value="maintenance">Maintenance</SelectItem>
-                  <SelectItem value="repair">Repair</SelectItem>
-                  <SelectItem value="customization">Customization</SelectItem>
-                </SelectContent>
-              </Select>
-
-              <Select value={selectedPriceRange} onValueChange={setSelectedPriceRange}>
-                <SelectTrigger className="h-12">
-                  <SelectValue placeholder="Price Range" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Prices</SelectItem>
-                  <SelectItem value="budget">Budget Friendly</SelectItem>
-                  <SelectItem value="mid">Mid Range</SelectItem>
-                  <SelectItem value="premium">Premium</SelectItem>
-                </SelectContent>
-              </Select>
-
-              <Select value={selectedRating} onValueChange={setSelectedRating}>
-                <SelectTrigger className="h-12">
-                  <SelectValue placeholder="Rating" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Ratings</SelectItem>
-                  <SelectItem value="4plus">4+ Stars</SelectItem>
-                  <SelectItem value="4.5plus">4.5+ Stars</SelectItem>
-                  <SelectItem value="5">5 Stars</SelectItem>
-                </SelectContent>
-              </Select>
-
-              <Select value={selectedDistance} onValueChange={setSelectedDistance}>
-                <SelectTrigger className="h-12">
-                  <SelectValue placeholder="Distance" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Any Distance</SelectItem>
-                  <SelectItem value="5">Within 5 km</SelectItem>
-                  <SelectItem value="10">Within 10 km</SelectItem>
-                  <SelectItem value="20">Within 20 km</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            {/* Quick Filters with improved animation */}
-            <div className="flex flex-wrap gap-2">
-              <QuickFilterBadge 
-                icon={Clock} 
-                active={activeFilters.includes('open')}
-                onClick={() => toggleFilter('open')}
-              >
-                Open Now
-              </QuickFilterBadge>
-              <QuickFilterBadge 
-                icon={Star}
-                active={activeFilters.includes('rated')}
-                onClick={() => toggleFilter('rated')}
-              >
-                Highly Rated
-              </QuickFilterBadge>
-              <QuickFilterBadge 
-                icon={MapPin}
-                active={activeFilters.includes('nearby')}
-                onClick={() => toggleFilter('nearby')}
-              >
-                Within 5km
-              </QuickFilterBadge>
-              <QuickFilterBadge 
-                icon={AlertTriangle}
-                active={activeFilters.includes('emergency')}
-                onClick={() => toggleFilter('emergency')}
-              >
-                Emergency Service
-              </QuickFilterBadge>
-            </div>
+            <FilterSection 
+              selectedServiceType={selectedServiceType}
+              setSelectedServiceType={setSelectedServiceType}
+              selectedPriceRange={selectedPriceRange}
+              setSelectedPriceRange={setSelectedPriceRange}
+              selectedRating={selectedRating}
+              setSelectedRating={setSelectedRating}
+              selectedDistance={selectedDistance}
+              setSelectedDistance={setSelectedDistance}
+              activeFilters={activeFilters}
+              toggleFilter={toggleFilter}
+            />
           </CardContent>
         </Card>
 
-        {/* View Toggle with improved styling */}
-        <div className="flex justify-center">
-          <Tabs defaultValue={showMap ? "map" : "list"} className="w-[400px]">
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger 
-                value="map"
-                onClick={() => setShowMap(true)}
-                className="data-[state=active]:bg-secondary data-[state=active]:text-white"
-              >
-                <Map className="h-4 w-4 mr-2" />
-                Map View
-              </TabsTrigger>
-              <TabsTrigger 
-                value="list"
-                onClick={() => setShowMap(false)}
-                className="data-[state=active]:bg-secondary data-[state=active]:text-white"
-              >
-                <LayoutGrid className="h-4 w-4 mr-2" />
-                List View
-              </TabsTrigger>
-            </TabsList>
-          </Tabs>
-        </div>
+        <ViewToggle 
+          showMap={showMap}
+          onViewChange={setShowMap}
+        />
 
-        {/* Loading State */}
         {isLoading ? (
           <div className="flex items-center justify-center py-12">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-secondary"></div>
           </div>
         ) : (
           <div className="space-y-8 animate-fade-in">
-            {/* Map View */}
             {showMap && (
               <div className="w-full rounded-2xl overflow-hidden shadow-xl border border-secondary/20 h-[500px] mb-6">
                 <WorkshopMap
@@ -327,28 +193,12 @@ const FindWorkshop = () => {
               </div>
             )}
 
-            {/* Results Summary with improved styling */}
-            <div className="flex flex-col sm:flex-row justify-between items-center gap-4 bg-muted/30 p-4 rounded-lg animate-fade-in">
-              <div className="space-y-1">
-                <h2 className="text-xl font-semibold">Available Workshops</h2>
-                <p className="text-muted-foreground">
-                  Showing {filteredWorkshops?.length || 0} workshops in your area
-                </p>
-              </div>
-              <div className="flex items-center gap-2">
-                <Select value={selectedDistance} onValueChange={setSelectedDistance}>
-                  <SelectTrigger className="w-[180px]">
-                    <SelectValue placeholder="Sort by distance" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="nearest">Nearest first</SelectItem>
-                    <SelectItem value="farthest">Farthest first</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
+            <ResultsSummary 
+              count={filteredWorkshops?.length || 0}
+              selectedDistance={selectedDistance}
+              onDistanceChange={setSelectedDistance}
+            />
 
-            {/* Workshop Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               <WorkshopList
                 onWorkshopSelect={(workshop) => {
@@ -383,7 +233,6 @@ const FindWorkshop = () => {
               />
             </div>
 
-            {/* Load More Button */}
             {filteredWorkshops.length > 0 && (
               <div className="flex justify-center mt-8">
                 <Button 
@@ -407,33 +256,5 @@ const FindWorkshop = () => {
     </div>
   );
 };
-
-// Enhanced Quick Filter Badge Component
-const QuickFilterBadge = ({ 
-  children, 
-  icon: Icon,
-  active = false,
-  onClick
-}: { 
-  children: React.ReactNode; 
-  icon: React.ComponentType<any>;
-  active?: boolean;
-  onClick?: () => void;
-}) => (
-  <Badge 
-    variant={active ? "secondary" : "outline"}
-    className={`
-      px-4 py-2 cursor-pointer transition-all duration-300 hover:scale-105
-      ${active 
-        ? 'bg-secondary text-white hover:bg-secondary/90' 
-        : 'hover:bg-secondary/10'
-      }
-    `}
-    onClick={onClick}
-  >
-    <Icon className={`h-4 w-4 mr-2 ${active ? 'text-white' : 'text-secondary'}`} />
-    {children}
-  </Badge>
-);
 
 export default FindWorkshop;
