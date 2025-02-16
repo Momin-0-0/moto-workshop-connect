@@ -343,24 +343,24 @@ const FindWorkshop = () => {
                   id: workshop.id.toString(),
                   created_at: new Date().toISOString(),
                   name: workshop.name,
-                  description: workshop.description,
+                  description: "Professional auto services", // Default description
                   address: workshop.address,
                   phone: workshop.phone,
-                  email: workshop.email,
-                  owner_id: workshop.owner_id,
+                  email: `contact@${workshop.name.toLowerCase().replace(/\s+/g, '')}.com`, // Generated email
+                  owner_id: `owner_${workshop.id}`, // Generated owner_id
                   latitude: workshop.latitude,
                   longitude: workshop.longitude,
                   rating: workshop.rating,
                   specialties: workshop.specialties,
                   price_range: {
-                    min: workshop.price_range.min,
-                    max: workshop.price_range.max
+                    min: 50, // Default minimum price
+                    max: 500 // Default maximum price
                   },
                   availability: {
-                    days: workshop.availability.days,
+                    days: ["Mon", "Tue", "Wed", "Thu", "Fri"], // Default working days
                     hours: {
-                      open: workshop.availability.hours.open,
-                      close: workshop.availability.hours.close
+                      open: "09:00",
+                      close: "18:00"
                     }
                   },
                   certifications: workshop.certifications
