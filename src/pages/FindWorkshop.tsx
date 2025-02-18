@@ -1,6 +1,6 @@
 import { Navbar } from "@/components/Navbar";
 import { WorkshopMap } from "@/components/WorkshopMap";
-import { WorkshopList } from "@/components/WorkshopList";
+import { WorkshopList } from "@/components/workshop/WorkshopList";
 import { useState, useEffect } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import type { Workshop } from "@/types/database.types";
@@ -122,8 +122,51 @@ const FindWorkshop = () => {
               days: ["Mon", "Tue", "Wed", "Thu", "Fri"],
               hours: { open: "09:00", close: "18:00" }
             },
-            certifications: ["ASE Certified"]
+            certifications: ["ASE Certified"],
+            distance: "2.3 km away"
           },
+          {
+            id: "2",
+            created_at: new Date().toISOString(),
+            name: "Elite Motorcycle Workshop",
+            description: "Premium motorcycle service and customization",
+            address: "456 Park Ave",
+            phone: "+1 234-567-8901",
+            email: "contact@elitebikes.com",
+            owner_id: "owner2",
+            latitude: 40.7589,
+            longitude: -73.9851,
+            rating: 4.9,
+            specialties: ["Custom Builds", "Performance Tuning"],
+            price_range: { min: 100, max: 1000 },
+            availability: {
+              days: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
+              hours: { open: "08:00", close: "18:00" }
+            },
+            certifications: ["BMW Certified"],
+            distance: "3.1 km away"
+          },
+          {
+            id: "3",
+            created_at: new Date().toISOString(),
+            name: "Quick Fix Motorcycles",
+            description: "Fast and reliable motorcycle repairs",
+            address: "789 Broadway",
+            phone: "+1 234-567-8902",
+            email: "contact@quickfix.com",
+            owner_id: "owner3",
+            latitude: 40.7549,
+            longitude: -73.9840,
+            rating: 4.7,
+            specialties: ["Emergency Repairs", "Basic Maintenance"],
+            price_range: { min: 40, max: 400 },
+            availability: {
+              days: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+              hours: { open: "08:00", close: "20:00" }
+            },
+            certifications: ["Kawasaki Certified"],
+            distance: "1.5 km away"
+          }
         ]);
       } catch (error) {
         toast({
@@ -138,6 +181,8 @@ const FindWorkshop = () => {
 
     loadWorkshops();
   }, [toast]);
+
+  
 
   return (
     <div className="min-h-screen bg-background">
@@ -183,56 +228,23 @@ const FindWorkshop = () => {
             {showMap && (
               <div className="w-full rounded-2xl overflow-hidden shadow-xl border border-secondary/20 h-[500px] mb-6 transition-all duration-300 hover:shadow-2xl">
                 <WorkshopMap
-                  workshops={selectedWorkshop ? [transformWorkshopForMap(selectedWorkshop)] : []}
+                  workshops={filteredWorkshops.map(transformWorkshopForMap)}
                   selectedWorkshop={selectedWorkshop ? transformWorkshopForMap(selectedWorkshop) : null}
-                  onWorkshopSelect={(mapWorkshop) => {
-                    if (selectedWorkshop) {
-                      setSelectedWorkshop(selectedWorkshop);
-                    }
-                  }}
+                  onWorkshopSelect={setSelectedWorkshop}
                 />
               </div>
             )}
 
             <ResultsSummary 
-              count={filteredWorkshops?.length || 0}
+              count={filteredWorkshops.length}
               selectedDistance={selectedDistance}
               onDistanceChange={setSelectedDistance}
             />
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              <WorkshopList
-                onWorkshopSelect={(workshop) => {
-                  const dbWorkshop: Workshop = {
-                    id: workshop.id.toString(),
-                    created_at: new Date().toISOString(),
-                    name: workshop.name,
-                    description: "Professional auto services",
-                    address: workshop.address,
-                    phone: workshop.phone,
-                    email: `contact@${workshop.name.toLowerCase().replace(/\s+/g, '')}.com`,
-                    owner_id: `owner_${workshop.id}`,
-                    latitude: workshop.latitude,
-                    longitude: workshop.longitude,
-                    rating: workshop.rating,
-                    specialties: workshop.specialties,
-                    price_range: {
-                      min: workshop.priceRange[0],
-                      max: workshop.priceRange[1]
-                    },
-                    availability: {
-                      days: ["Mon", "Tue", "Wed", "Thu", "Fri"],
-                      hours: {
-                        open: "09:00",
-                        close: "18:00"
-                      }
-                    },
-                    certifications: workshop.certifications
-                  };
-                  setSelectedWorkshop(dbWorkshop);
-                }}
-              />
-            </div>
+            <WorkshopList
+              workshops={filteredWorkshops}
+              onWorkshopSelect={setSelectedWorkshop}
+            />
 
             {filteredWorkshops.length > 0 && (
               <div className="flex justify-center mt-8">
