@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { 
   Search, ShoppingCart, SlidersHorizontal, ChevronDown, 
   ArrowDownWideNarrow, FilterX, BadgePercent, Truck,
-  Shield, Clock, X // Added missing icons
+  Shield, Clock, X
 } from "lucide-react";
 import {
   Select,
