@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { 
   Clock, Shield, Settings, Wrench, Star, 
-  ArrowRight, Tool, Gauge, Battery, Zap 
+  ArrowRight, Gauge, Battery, Zap 
 } from "lucide-react";
 import { Link } from "react-router-dom";
 
@@ -32,7 +32,7 @@ const additionalServices = [
   {
     title: "Chain & Sprocket",
     description: "Expert chain adjustment, lubrication, or replacement service",
-    icon: Tool,
+    icon: Wrench, // Changed from Tool to Wrench
     price: "From $70",
     rating: 4.7,
     timeEstimate: "30-45 mins",
