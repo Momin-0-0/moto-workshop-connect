@@ -42,7 +42,6 @@ const FindWorkshop = () => {
   const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
 
-  // Keep existing filterWorkshops logic
   const filteredWorkshops = workshops.filter(workshop => {
     let matches = true;
 
@@ -175,12 +174,14 @@ const FindWorkshop = () => {
 
         {isLoading ? (
           <div className="flex items-center justify-center py-12">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-secondary"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-secondary">
+              <div className="sr-only">Loading...</div>
+            </div>
           </div>
         ) : (
           <div className="space-y-8 animate-fade-in">
             {showMap && (
-              <div className="w-full rounded-2xl overflow-hidden shadow-xl border border-secondary/20 h-[500px] mb-6">
+              <div className="w-full rounded-2xl overflow-hidden shadow-xl border border-secondary/20 h-[500px] mb-6 transition-all duration-300 hover:shadow-2xl">
                 <WorkshopMap
                   workshops={selectedWorkshop ? [transformWorkshopForMap(selectedWorkshop)] : []}
                   selectedWorkshop={selectedWorkshop ? transformWorkshopForMap(selectedWorkshop) : null}
@@ -237,7 +238,7 @@ const FindWorkshop = () => {
               <div className="flex justify-center mt-8">
                 <Button 
                   variant="outline" 
-                  className="w-full max-w-xs group"
+                  className="w-full max-w-xs group hover:bg-secondary hover:text-white transition-all duration-300"
                   onClick={() => {
                     toast({
                       title: "Loading more workshops...",
