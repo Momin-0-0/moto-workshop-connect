@@ -1,5 +1,5 @@
 
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Star, Clock, MapPin } from "lucide-react";
 
 export const HeroSection = () => {
   return (
