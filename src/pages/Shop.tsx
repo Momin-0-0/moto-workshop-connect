@@ -6,7 +6,8 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { 
   Search, ShoppingCart, SlidersHorizontal, ChevronDown, 
-  ArrowDownWideNarrow, FilterX, BadgePercent, Truck 
+  ArrowDownWideNarrow, FilterX, BadgePercent, Truck,
+  Shield, Clock, X // Added missing icons
 } from "lucide-react";
 import {
   Select,
