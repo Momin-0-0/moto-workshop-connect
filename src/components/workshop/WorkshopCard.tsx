@@ -1,26 +1,23 @@
 
-import { Star, MapPin, Phone, Clock, Award } from "lucide-react";
+import { Star, MapPin, Phone, Clock } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
+import type { Workshop } from "@/types/database.types";
 
 interface WorkshopCardProps {
-  workshop: {
-    id: string;
-    name: string;
-    distance: string;
-    rating: number;
-    specialties: string[];
-    phone: string;
-    hours: string[];
-    address: string;
-  };
-  onSelect: (workshop: any) => void;
+  workshop: Workshop;
+  onSelect: (workshop: Workshop) => void;
 }
 
 export const WorkshopCard = ({ workshop, onSelect }: WorkshopCardProps) => {
   const navigate = useNavigate();
+
+  // Format hours for display
+  const displayHours = workshop.hours 
+    ? workshop.hours[0] 
+    : `${workshop.availability.hours.open} - ${workshop.availability.hours.close}`;
 
   return (
     <Card className="h-full hover:shadow-lg transition-all duration-300">
@@ -32,7 +29,7 @@ export const WorkshopCard = ({ workshop, onSelect }: WorkshopCardProps) => {
             </h3>
             <div className="flex items-center gap-2 text-muted-foreground mt-1">
               <MapPin className="h-4 w-4" />
-              <span className="text-sm">{workshop.distance}</span>
+              <span className="text-sm">{workshop.distance || "Distance not available"}</span>
             </div>
           </div>
           <div className="flex items-center bg-yellow-50 px-2 py-1 rounded">
@@ -60,7 +57,7 @@ export const WorkshopCard = ({ workshop, onSelect }: WorkshopCardProps) => {
           </div>
           <div className="flex items-center gap-2">
             <Clock className="h-4 w-4" />
-            {workshop.hours[0]}
+            {displayHours}
           </div>
           <div className="flex items-center gap-2">
             <MapPin className="h-4 w-4" />

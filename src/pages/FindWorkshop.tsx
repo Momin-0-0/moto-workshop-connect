@@ -182,8 +182,6 @@ const FindWorkshop = () => {
     loadWorkshops();
   }, [toast]);
 
-  
-
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
@@ -230,7 +228,12 @@ const FindWorkshop = () => {
                 <WorkshopMap
                   workshops={filteredWorkshops.map(transformWorkshopForMap)}
                   selectedWorkshop={selectedWorkshop ? transformWorkshopForMap(selectedWorkshop) : null}
-                  onWorkshopSelect={setSelectedWorkshop}
+                  onWorkshopSelect={(mapWorkshop) => {
+                    const workshop = filteredWorkshops.find(w => w.id === mapWorkshop.id.toString());
+                    if (workshop) {
+                      setSelectedWorkshop(workshop);
+                    }
+                  }}
                 />
               </div>
             )}
